@@ -1,0 +1,17 @@
+# Ignore bundler config
+/.bundle
+
+# Ignore logs and temp files
+/log/*
+/tmp/*
+/storage/*
+/public/assets
+
+# Ignore compiled files
+/node_modules
+/yarn-error.log
+/coverage
+/vendor/bundle
+
+# Ignore dotenv environment variables file
+.env
