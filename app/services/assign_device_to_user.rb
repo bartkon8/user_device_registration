@@ -9,14 +9,24 @@ class AssignDeviceToUser
   end
 
   def call
+    
     ActiveRecord::Base.transaction do
+      if @requesting_user.id != @new_device_owner_id
+        raise RegistrationError::Unauthorized, "You can't assign a device to another user"
+      end
       device = Device.find_or_create_by!(serial_number: serial_number)
       return unless device
-      DeviceAssignment.create!(
+      assignmet = DeviceAssignment.find_by(
         device: device,
-        user_id: new_device_owner_id,
-        assigned_at: Time.current
+        user_id: new_device_owner_id
       )
+      
+      DeviceAssignment.create!(
+      device: device,
+      user_id: new_device_owner_id,
+      assigned_at: Time.current
+      )     
+      
       device    
     end
   end
