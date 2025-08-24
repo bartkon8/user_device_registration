@@ -4,4 +4,8 @@ class ApplicationController < ActionController::API
     @current_user = api_key&.bearer
     head :unauthorized unless @current_user if @current_user.nil?
   end
+
+  def current_user
+    @current_user
+  end
 end

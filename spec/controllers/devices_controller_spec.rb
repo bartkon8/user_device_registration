@@ -42,6 +42,61 @@ RSpec.describe DevicesController, type: :controller do
   end
 
   describe 'POST #unassign' do
-    # TODO: implement the tests for the unassign action
+    let(:serial_number) { '12345' }
+
+    context 'when the user is authenticated' do
+      let(:user) { create(:user) }
+
+      before do
+        allow(controller).to receive(:authenticate_user!).and_return(true)
+        allow(controller).to receive(:current_user).and_return(user)
+      end
+
+      context 'when user returns own device' do
+        before do
+          AssignDeviceToUser.new(
+            requesting_user: user,
+            serial_number: serial_number,
+            new_device_owner_id: user.id
+          ).call
+        end
+
+        it 'returns a success response' do
+          post :unassign, params: { serial_number: serial_number, from_user: user.id }
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'when user tries to return a device assigned to another user' do
+        let(:other_user) { create(:user) }
+
+        before do
+          AssignDeviceToUser.new(
+            requesting_user: other_user,
+            serial_number: serial_number,
+            new_device_owner_id: other_user.id
+          ).call
+        end
+
+        it 'returns an unprocessable entity response' do
+          post :unassign, params: { serial_number: serial_number, from_user: user.id }
+          expect(response).to be_unprocessable_entity
+        end
+      end
+
+      context 'when device is not assigned' do
+        it 'returns an unprocessable entity response' do
+          post :unassign, params: { serial_number: serial_number, from_user: user.id }
+          expect(response).to be_unprocessable_entity
+        end
+      end
+    end
+
+    context 'when the user is not authenticated' do
+      it 'returns an unauthorized response' do
+        post :unassign, params: { serial_number: serial_number, from_user: 1 }
+        expect(response).to be_unauthorized
+      end
+    end
   end
 end
