@@ -19,7 +19,7 @@ class DevicesController < ApplicationController
     ReturnDeviceFromUser.new(
       user: current_user,
       serial_number: params[:serial_number],
-      from_user: params[:from_user]
+      from_user: params[:from_user].to_i
     ).call
     head :ok
   end

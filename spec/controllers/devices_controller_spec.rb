@@ -85,16 +85,16 @@ RSpec.describe DevicesController, type: :controller do
           ).call
         end
 
-        it 'returns an unprocessable entity response' do
+        it 'returns an unauthorized response' do
           post :unassign, params: { serial_number: serial_number, from_user: user.id }
-          expect(response).to be_unprocessable_entity
+          expect(response).to be_unauthorized
         end
       end
 
       context 'when device is not assigned' do
         it 'returns an unprocessable entity response' do
           post :unassign, params: { serial_number: serial_number, from_user: user.id }
-          expect(response).to be_unprocessable_entity
+          expect(response.status).to eq(422)
         end
       end
     end
