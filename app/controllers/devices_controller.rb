@@ -13,6 +13,12 @@ class DevicesController < ApplicationController
 
   def unassign
     # TODO: implement the unassign action
+    ReturnDeviceFromUser.new(
+      user: current_user,
+      serial_number: params[:serial_number],
+      from_user: params[:from_user]
+    ).call
+    head :ok
   end
 
   private
