@@ -21,6 +21,7 @@ A simple Rails application for tracking devices assigned to users within an orga
 - Rails `7.1.x`
 - Bundler
 - SQLite
+- Tested on Ubuntu 22.04 LTS
 
 ---
 
