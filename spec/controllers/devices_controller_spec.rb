@@ -6,7 +6,6 @@ RSpec.describe DevicesController, type: :controller do
   let(:api_key) { create(:api_key) }
   let(:user) { api_key.bearer }
 
-
   describe 'POST #assign' do
     let(:serial_number) { '123456' }
     let(:user) { create(:user) }
@@ -14,11 +13,13 @@ RSpec.describe DevicesController, type: :controller do
     subject(:perform) do
       post :assign, params: { serial_number: serial_number, new_device_owner_id: new_owner_id }
     end
+
     context 'when the user is authenticated' do
       before do
         allow(controller).to receive(:authenticate_user!).and_return(true)
         allow(controller).to receive(:current_user).and_return(user)
       end
+
       context 'when user assigns a device to another user' do
         let(:new_owner_id) { create(:user).id }
 

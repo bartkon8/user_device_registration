@@ -22,10 +22,11 @@ class ReturnDeviceFromUser
       active_assignment.update!(returned_at: Time.current)
       device.update!(current_owner_id: nil) if device.respond_to?(:current_owner_id)
 
-      active_assignment
-    
+      active_assignment    
     end
   end
+
   private
+  
   attr_reader :user, :serial_number, :from_user
 end
