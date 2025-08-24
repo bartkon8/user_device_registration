@@ -3,12 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe AssignDeviceToUser do
-  subject(:assign_device) do
-    described_class.new(
-      requesting_user: user,
-      serial_number: serial_number,
-      new_device_owner_id: new_device_owner_id
-    ).call
+  subject(:perform) do
+    -> {
+      described_class.new(
+        requesting_user: user,
+        serial_number: serial_number,
+        new_device_owner_id: new_device_owner_id
+      ).call
+    }
   end
 
   let(:user) { create(:user) }
@@ -18,7 +20,7 @@ RSpec.describe AssignDeviceToUser do
     let(:new_device_owner_id) { create(:user).id }
 
     it 'raises an error' do
-      expect { assign_device }.to raise_error(RegistrationError::Unauthorized)
+      expect { perform.call }.to raise_error(RegistrationError::Unauthorized)
     end
   end
 
@@ -26,19 +28,19 @@ RSpec.describe AssignDeviceToUser do
     let(:new_device_owner_id) { user.id }
 
     it 'creates a new device' do
-      assign_device
+      perform.call
 
       expect(user.devices.pluck(:serial_number)).to include(serial_number)
     end
 
     context 'when a user tries to register a device that was already assigned to and returned by the same user' do
       before do
-        assign_device
+        perform.call
         ReturnDeviceFromUser.new(user: user, serial_number: serial_number, from_user: user.id).call
       end
 
       it 'does not allow to register' do
-        expect { assign_device }.to raise_error(AssigningError::AlreadyUsedOnUser)
+        expect { perform.call }.to raise_error(AssigningError::AlreadyUsedOnUser)
       end
     end
 
@@ -54,7 +56,7 @@ RSpec.describe AssignDeviceToUser do
       end
 
       it 'does not allow to register' do
-        expect { assign_device }.to raise_error(AssigningError::AlreadyUsedOnOtherUser)
+        expect { perform.call }.to raise_error(AssigningError::AlreadyUsedOnOtherUser)
       end
     end
   end
