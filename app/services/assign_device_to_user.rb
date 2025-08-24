@@ -11,6 +11,7 @@ class AssignDeviceToUser
   def call
     
     ActiveRecord::Base.transaction do
+      Rails.logger.info "[ASSIGN] req_id=#{requesting_user&.id} new_owner=#{new_device_owner_id.inspect} sn=#{serial_number.inspect} (class=#{new_device_owner_id.class})"
       if requesting_user.id != new_device_owner_id
         raise RegistrationError::Unauthorized, "You can't assign a device to another user"
       end
